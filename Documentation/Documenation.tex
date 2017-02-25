@@ -1,0 +1,205 @@
+\documentclass[12pt,twoside,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\usepackage{qtree}
+
+
+\makeatletter
+\def\thickhrule{\leavevmode \leaders \hrule height 1ex \hfill \kern \z@}
+\def\position{\centering}
+%% Note the difference between the commands the one is 
+%% make and the other one is makes
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \position \reset@font
+        {\Huge \scshape  \thechapter \hspace{10\p@} \bfseries #1\par\nobreak }
+        \par\nobreak
+        \vspace*{10\p@}%
+        \interlinepenalty\@M
+        \par\nobreak
+        \vspace*{2\p@}%
+        \vspace*{2\p@}%
+    \vskip 40\p@
+
+  }}
+
+%% This uses makes
+
+\def\@makeschapterhead#1{%
+  \vspace*{10\p@}%
+  {\parindent \z@ \position \reset@font
+        {\Huge \scshape \vphantom{\thechapter}}
+        \par\nobreak
+        \vspace*{10\p@}%
+        \interlinepenalty\@M
+
+        \par\nobreak
+        \vspace*{2\p@}%
+        {\Huge \bfseries #1\par\nobreak}
+        \par\nobreak
+        \vspace*{2\p@}%
+
+  }}
+
+
+
+
+
+
+
+
+\begin{document}
+\frontmatter
+
+\title{Dokumentation des Projets "QM-Potential"}
+\author{Philipp Haim}
+\maketitle
+
+\chapter{Einf\"{u}hrung}
+Bei dem Projekt ging es primär nicht darum, eine M\"{o}glichkeit zu haben, verschiedene Potentialt\"{o}pfe
+darzustellen, sondern vielmehr um die Erfahrung, die es bei einem solchen Projekt zu sammeln gibt.
+Aus demselben Grund wurde dieser Text geschrieben, um Erfahrung bei dem Umgang mit Latex zu bekommen.
+
+
+\mainmatter
+\chapter{Die Grundideen}
+In diesem Kapitel sollen sowohl die physikalischen Grundlagen oberfl\"{a}chlich erl\"{a}utert, sowie die grundlegende Struktur der Anwendung diskutiert werden. Es soll ein \"{U}berblick \"{u}ber das Projekt geschaffen werden, der einer interessierten Person einen Einblick in die Funktionsweise des Programms ermöglicht, ohne dass diese sich mit den technischen Details der Umsetzung auseinander setzen muss.\\ Auch wer bei der Analyse des Codes den Faden verloren hat und versucht wieder anzukn\"{u}pfen, soll in diesem Kapitel angesprochen werden.
+
+\section{Physikalische Grundlagen}
+Das Darstellen von Potentialen und deren St\"{o}rung
+\subsection{Potentiale} \label{sec:potential}
+Folgende Potentiale k\"{o}nnen durch das Programm dargestellt werden:
+
+\begin{itemize}
+\item Unendlicher Potentialtopf
+\item Endlicher Potentialtopf
+\item Harmonisch
+\item Freies Teilchen
+\end{itemize}
+
+Diese k\"{o}nnen jeweils in ihrer Form verändert werden.
+\\Quantenmechanisch sind bis auf den endlichen Potentialtopf alle analytisch l\"{o}sbar, und sowohl ihre
+Energien wie auch die zugeh\"{o}rige Wellenfunktion sind leicht zu bestimmen. Im Folgenden m\"{o}chte ich
+diese kurz zusammenfassen.
+
+
+
+\paragraph{Unendlicher Potentialtopf}Dieser wird hier als ein um den Ursprung symmetrisches Intervall mit Potential 0, umgeben von einem unendlich hohen Potential, dargestellt.
+\begin{equation}
+V(x) =
+\begin{cases}
+\infty & \quad \text{f\"{u}r} |x|>\frac{a}{2}\\
+0 & \quad \text{f\"{u}r} |x|<\frac{a}{2}\\
+\end{cases}
+\end{equation}
+
+Der einizig n\"{o}tige Parameter ist die Breite \textbf{a}. Es gibt unendlich viele Moden, die allerdings nie in den Bereich mit \(V \neq 0\) reichen. Die der Mode \textbf{n} zugeh\"{o}rige Energie ist durch
+\begin{equation}E_n=\frac{h}{(2\pi)^22m}\frac{n \pi}{a} 
+\end{equation}
+gegeben. Im Falle \(n = 1\) hat die Wellenfunktion gerade Parit\"{a}t und keine Umkehrpunkte. Diese nehmen mit der Mode zu, außerdem wechselt die Parit\"{a}t bei jedem Schritt. Exakt werden diese durch
+folgende Funktionen dargestellt:
+\begin{equation} \varphi(x) = 
+\begin{cases}
+\sqrt{\frac{2}{a}} \, \cos(\frac{n\pi}{a}x) & \quad \text{für } n \text{ ungerade}\\
+\sqrt{\frac{2}{a}} \, \sin(\frac{n\pi}{a}x) & \quad \text{für } n \text{ gerade}\\
+\end{cases}
+\end{equation}
+
+
+
+\paragraph{Endlicher Potentialtopf}Dieser ist von der From sehr \"{a}hnlich zu dem unendlichen Potentialtopf. Hier sind die charakteristischen Parameter die Breite \textbf{a} sowie die Tiefe des Potentials \textbf{V}. Er hat als einziger keine analytischen L\"{o}sungen, da es n\"{o}tig ist, folgende transzendente Gleichungen zu l\"{o}sen:
+
+\begin{equation} \label{transzendent1}
+\tan(k_n)=\frac{\sqrt{2m(V-E_n)}}{k_n} \quad \text{(für } n \text{ ungerade)}
+\end{equation}
+\begin{equation}\label{transzendent2}
+\cot(k_n)=\frac{\sqrt{2m(V-E_n)}}{k_n} \quad \text{(für } n \text{ gerade)}
+\end{equation}
+
+Die erste Gleichung hat immer mindestens eine L\"{o}sung, und damit gibt es auch stets eine station\"{a}re Mode in diesem Potential. \"{U}bersteigt die Energie das Potential der Topfes, so handelt es sich um ein freies Wellenpaket. Vorerst werden aber nur gebundene Zust\"{a}nde betrachtet.\\
+Mit der Abk\"{u}rzung \(\kappa = \sqrt{2m(V-E)}\)erh\"{a}lt man damit folgende Wellenfunktionen:
+\begin{equation}
+\varphi_n(x)=
+\begin{cases}
+C\exp(\kappa x) & \quad x<-\frac{a}{2}\\
+A\cos(k_n x) & \quad -\frac{a}{2}<x<\frac{a}{2}\\
+C\exp(-\kappa x) & \quad x>\frac{a}{2}\\
+\end{cases}
+\quad \text{für gerade n}
+\end{equation}
+\begin{equation}
+\varphi_n(x)=
+\begin{cases}
+-C\exp(\kappa x) & \quad x<-\frac{a}{2}\\
+B\sin(k_n x) & \quad -\frac{a}{2}<x<\frac{a}{2}\\
+C\exp(-\kappa x) & \quad x>\frac{a}{2}\\
+\end{cases}
+\quad \text{für ungerade n}
+\end{equation}
+Die Konstanten werden über die Normierungsbedingung bestimnmt.
+\textbf{(Die Gleichungen \eqref{transzendent1} und \eqref{transzendent2} sind noch in nicht zufriedenstellender Form!)}
+
+
+\paragraph{Harmonisches Potential} 
+
+%Es müssen hier die Hermetien Polynome n-fach abgeleitet werden! Mit der Speicherung der Funktion in einem Array und der Definition von Ableitung von Polynomen und der e-Funktion sowie der Produktregel, kann ich das analytisch machen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+\paragraph{Freies Teilchen}
+
+
+
+\subsection{St\"{o}rungstheorie}
+
+
+
+
+\section{Grundlegende Struktur der Anwendung}
+
+Da jedes der Potentiale gest\"{o}rt werden kann und dabei dieselben Schritte durchgef\"{u}hrt werden m\"{u}ssen, wurde zun\"{a}chst die Klasse St\"{o}rung angelegt. Diese hat Methoden, mit denen sie in der Lage ist, sowohl die Verschiebung der Energieniveus als auch die Ver\"{a}nderung
+der Wellenfunktion zu ber\"{u}cksichtigen. Die konkreten Potentiale werden als Kinder angelegt und erben damit diese Methoden.\\
+Außerhalb dieser Klasse findet man noch die globalen Funktionen. Der Integrierer l\"{o}st die 
+Gleichungen der St\"{o}rungstheorie, mit dem Ableiter k\"{o}nnen die exakten Funktionen des harmonischen Oszillators berechnet werden und die Darstellen-Funktion erm\"{o}glicht, die 
+Wellenfunktionen darzustellen. Sie werden außerhalb der St\"{o}rungs-Klasse definiert, um 
+allgemeiner zu bleiben und eventuell in anderen Anwendungen zum Einsatz kommen zu k\"{o}nnen.
+
+\begin{figure}[H]
+\begin{tabular}{c r}
+\multirow{3}{*}{\Tree [ .\textbf{Klasse St\"{o}rung} [ .{Child-Klassen\\endlich/unendlich/...} [ .{Child f\"{u}r jeweilige Mode} ]][ .gest\"{o}rte\\Energieniveaus ] [ .gest\"{o}rte\\Wellenfunktionen ] ]} & \textbf{Integrierer}\\\\\\ & \textbf{Ableiter}\\\\\\ & \textbf{Darstellen}\\\\\\
+\end{tabular}
+\caption{Klassen-Struktur mit globalen Funktionen\label{klassen&funkt}}
+\end{figure}
+
+\subsection{Parameter}
+
+\paragraph{St\"{o}rung}Einem Objekt dieser Klasse wird ein Polynom dritten Grades in Form der jeweiligen Koeffizienten \"{u}bergeben. Der Nullte wird jedoch ausgelassen, da damit lediglich eine 
+Verschiebung der Energien um einen konstanten Faktor bewirkt wird.
+
+\paragraph{Child-Klassen}Bei der Initialisierung werden diesen die jeweils n\"{o}tigen Parameter
+\"{u}bergeben (siehe \hyperref[sec:potential]{Potentiale}). Außerdem wird die gew\"{u}nschte Mode als nat\"{u}rliche Zahl \"{u}bergeben.
+
+\paragraph{Integrierer}Hier wird ein Function-Type Object ben\"{o}tigt, sowie eine Anfangsbreite (hier die Breite des klassisch erlaubten Bereichs). Es kann angegeben werden, ob das Integral innerhalb der genannten Grenzen berechnet werden soll, oder aber von diesen ausgehend neue Grenzen so gesucht werden sollen, sodass (bei Anfangswerten außerhalb des oszillierenden Bereichs) fast alle Beitr\"{a}ge der Funktion in diesen liegen.
+
+\paragraph{Ableiter}\"{U}bergeben wird hier eine Liste, bei dem jeder Summand in Terme mit nur 
+einem \textbf{x} unterteilt wird und die Summanden durch Listen-Elemente mit Inhalt 'plus' getrennt sind. 
+
+\paragraph{Darstellen}Dieser Funktion muss erneut ein Function-Type Object (die Wellenfunktion) \"{u}bergeben werden, sowie das Intervall, in dem dargestellt werden soll. Zus\"{a}tzlich kann ein Offset angegeben werden, damit nicht alle Wellenfunktionen aufeinander liegen und besser erkennbar werden.
+
+\chapter{Definitionen}
+
+
+
+\chapter{Implementierung}
+
+
+
+
+\chapter{Tests und Performance}
+
+\end{document}\grid
